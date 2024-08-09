@@ -1,0 +1,24 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+ldap3 = "~=2.9"
+pydantic = "~=2.6"
+typer = "*"
+httpx = "*"
+mechanize = "*"
+rich = "*"
+pydantic-settings = "*"
+xattr = "*"
+pyhumps = "*"
+
+[dev-packages]
+pyright = "*"
+black = "*"
+hatchling = "*"
+ipdb = "*"
+
+[requires]
+python_version = "3.10"
