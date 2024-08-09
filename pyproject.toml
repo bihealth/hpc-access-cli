@@ -46,7 +46,7 @@ dependencies = [
   "pyhumps==3.8.0",
   "pyright==1.1.350",
   "python-dotenv==1.0.1",
-  "rich==13.7.0",
+  "rich==13.7.1",
   "six==1.16.0",
   "sniffio==1.3.0",
   "tomli==2.0.1",
