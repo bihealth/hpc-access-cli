@@ -557,8 +557,13 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
         members = []
         for uid in p.member_uids:
             uid = uid.strip()
-            user = user_by_uid[uid]
-            members.append(user_uuids[user.uid])
+            try:
+                user = user_by_uid[uid]
+                members.append(user_uuids[user.uid])
+            except KeyError:
+                console_err.log(
+                    f"No user LDAP entry found for {uid} in project {name}. Ignoring uid."
+                )
         gid_number = user_by_dn[p.owner_dn].gid_number
         if not gid_number:
             group = None
