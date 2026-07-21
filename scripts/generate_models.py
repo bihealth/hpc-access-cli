@@ -15,30 +15,18 @@ Usage:
 from __future__ import annotations
 
 import importlib.resources
-import json
 import pathlib
 import subprocess
 import sys
+import tempfile
+
+from datamodel_code_generator import DataModelType, Formatter, PythonVersion, generate
 
 SCHEMA_PACKAGE = "hpc_access"
 SCHEMA_RESOURCE = "openapi-schema.json"
 _REPO_ROOT = pathlib.Path(__file__).resolve().parent.parent
 OUTPUT_PATH = _REPO_ROOT / "src" / "hpc_access_cli" / "api_models.py"
 
-# Schema-derived models to generate (order matters for dependencies).
-SCHEMA_MODELS = ["HpcUser", "HpcGroup", "HpcProject"]
-
-# Maps OpenAPI type+format to Python type annotations.
-TYPE_MAP: dict[tuple[str, str | None], str] = {
-    ("string", "date-time"): "datetime.datetime",
-    ("string", "uuid"): "UUID",
-    ("string", None): "str",
-    ("integer", None): "int",
-    ("boolean", None): "bool",
-    ("number", None): "float",
-}
-
-# Hand-maintained types for JSON fields and enums that the schema doesn't expose.
 HAND_MAINTAINED = '''\
 
 
@@ -86,51 +74,49 @@ class GroupFolders(BaseModel):
 '''
 
 
-def _resolve_type(prop: dict) -> str:
-    """Resolve an OpenAPI property schema to a Python type string."""
-    t = prop.get("type")
-    fmt = prop.get("format")
-    if t == "array":
-        items = prop.get("items", {})
-        return f"list[{_resolve_type(items)}]"
-    return TYPE_MAP.get((t, fmt), "Any")
-
-
-def _gen_model(name: str, schema: dict) -> str:
-    """Generate a Pydantic model class from an OpenAPI schema object."""
-    props = schema.get("properties", {})
-    required = set(schema.get("required", []))
-    desc = schema.get("description", "")
-
-    lines: list[str] = []
-    if desc:
-        lines.append(f'    """{desc}"""')
-        lines.append("")
-
-    for fname, fdef in props.items():
-        ftype = _resolve_type(fdef)
-        fdesc = fdef.get("description", "")
-
-        if fname not in required:
-            ftype = f"{ftype} | None"
-            default = "None"
-        else:
-            default = "..."
-
-        comment = f"  # {fdesc}" if fdesc else ""
-        lines.append(f"    {fname}: {ftype} = {default}{comment}")
-
-    return "\n".join(lines)
-
-
 def main() -> None:
     schema_ref = importlib.resources.files(SCHEMA_PACKAGE).joinpath(SCHEMA_RESOURCE)
     with importlib.resources.as_file(schema_ref) as schema_path:
         if not schema_path.exists():
             sys.exit(f"Schema not found: {schema_path}")
-        schema = json.loads(schema_path.read_text())
 
-    schemas = schema.get("components", {}).get("schemas", {})
+        with tempfile.NamedTemporaryFile(suffix=".py", mode="w", delete=False) as tmp:
+            tmp_path = pathlib.Path(tmp.name)
+
+        try:
+            generate(
+                input_=schema_path,
+                input_file_type="openapi",
+                output=tmp_path,
+                output_model_type=DataModelType.PydanticV2BaseModel,
+                target_python_version=PythonVersion.PY_312,
+                use_standard_collections=True,
+                use_union_operator=True,
+                field_constraints=True,
+                snake_case_field=True,
+                formatters=[Formatter.BUILTIN],
+            )
+            raw = tmp_path.read_text()
+        finally:
+            tmp_path.unlink(missing_ok=True)
+
+    generated_lines = raw.splitlines()
+
+    # Collect needed imports from the generated code.
+    extra_imports: set[str] = set()
+    for line in generated_lines:
+        stripped = line.strip()
+        if stripped.startswith("class ") or line.startswith("    "):
+            if "AnyUrl" in stripped:
+                extra_imports.add("AnyUrl")
+            if "AwareDatetime" in stripped:
+                extra_imports.add("AwareDatetime")
+            if "Field(" in stripped:
+                extra_imports.add("Field")
+
+    # Build the header.
+    pydantic_imports = ["BaseModel"] + sorted(extra_imports)
+    pydantic_line = f"from pydantic import {', '.join(pydantic_imports)}"
 
     parts: list[str] = [
         '"""Auto-generated Pydantic models from the hpc-access OpenAPI schema.',
@@ -145,29 +131,26 @@ def main() -> None:
         "from typing import Any",
         "from uuid import UUID",
         "",
-        "from pydantic import BaseModel",
-        "",
-        HAND_MAINTAINED.strip(),
+        pydantic_line,
     ]
 
-    for name in SCHEMA_MODELS:
-        spec = schemas.get(name)
-        if spec is None:
-            sys.exit(f"Schema '{name}' not found")
+    parts.append("")
+    parts.append(HAND_MAINTAINED.strip())
 
-        model_body = _gen_model(name, spec)
-        parts.append(f"\n\nclass {name}(BaseModel):")
-        parts.append(model_body)
+    # Extract class definitions from the generated code.
+    in_class = False
+    for line in generated_lines:
+        stripped = line.strip()
+        if stripped.startswith("class "):
+            in_class = True
+        if in_class:
+            parts.append(line)
 
-    parts.append("")  # trailing newline
-
-    OUTPUT_PATH.write_text("\n".join(parts))
+    OUTPUT_PATH.write_text("\n".join(parts) + "\n")
     print(f"Wrote {OUTPUT_PATH}")
 
-    # Let ruff fix imports and formatting.
-    subprocess.run(["uv", "run", "ruff", "check", "--fix", str(OUTPUT_PATH)], check=True)
-    subprocess.run(["uv", "run", "ruff", "format", str(OUTPUT_PATH)], check=True)
-    print("Formatted with ruff")
+    subprocess.run(["uv", "run", "ruff", "check", "--fix", str(OUTPUT_PATH)])
+    subprocess.run(["uv", "run", "ruff", "format", str(OUTPUT_PATH)])
 
 
 if __name__ == "__main__":
