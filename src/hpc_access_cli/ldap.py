@@ -8,9 +8,8 @@ import ldap3
 from rich.console import Console
 
 from hpc_access_cli.config import LdapSettings
-from hpc_access_cli.models import (
+from hpc_access_cli.local_models import (
     LOGIN_SHELL_DISABLED,
-    # Gecos,
     LdapGroup,
     LdapGroupOp,
     LdapUser,

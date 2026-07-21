@@ -9,6 +9,15 @@ from uuid import uuid4
 
 from rich.console import Console
 
+from hpc_access_cli.api_models import (
+    GroupFolders,
+    HpcGroup,
+    HpcProject,
+    HpcUser,
+    ResourceData,
+    ResourceDataUser,
+    Status,
+)
 from hpc_access_cli.config import HpcaccessSettings, Settings
 from hpc_access_cli.constants import (
     BASE_DN_CHARITE,
@@ -33,25 +42,17 @@ from hpc_access_cli.constants import (
 )
 from hpc_access_cli.fs import FsResourceManager
 from hpc_access_cli.ldap import LdapConnection
-from hpc_access_cli.models import (
+from hpc_access_cli.local_models import (
     LOGIN_SHELL_DISABLED,
     FsDirectory,
     FsDirectoryOp,
-    # Gecos,
-    GroupFolders,
     HpcaccessState,
-    HpcGroup,
-    HpcProject,
-    HpcUser,
     LdapGroup,
     LdapGroupOp,
     LdapUser,
     LdapUserOp,
     OperationsContainer,
-    ResourceData,
-    ResourceDataUser,
     StateOperation,
-    Status,
     SystemState,
 )
 from hpc_access_cli.rest import HpcaccessClient

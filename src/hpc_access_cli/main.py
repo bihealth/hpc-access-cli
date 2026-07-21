@@ -9,7 +9,7 @@ from typing_extensions import Annotated
 from hpc_access_cli.config import load_settings
 from hpc_access_cli.constants import ENTITIES, ENTITY_USERS
 from hpc_access_cli.fs import FS_GROUP_OPS, FS_PROJECT_OPS, FS_USER_OPS
-from hpc_access_cli.models import StateOperation
+from hpc_access_cli.local_models import StateOperation
 from hpc_access_cli.states import (
     TargetStateBuilder,
     TargetStateComparison,
