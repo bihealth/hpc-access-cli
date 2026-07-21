@@ -10,7 +10,7 @@ from rich.console import Console
 from hpc_access_cli.config import LdapSettings
 from hpc_access_cli.models import (
     LOGIN_SHELL_DISABLED,
-    Gecos,
+    # Gecos,
     LdapGroup,
     LdapGroupOp,
     LdapUser,
@@ -80,18 +80,19 @@ class LdapConnection:
                 "uidNumber",
                 "gidNumber",
                 "homeDirectory",
-                "gecos",
+                # "gecos",
                 "loginShell",
                 "mail",
                 "displayName",
                 "sshPublicKey",
+                "telephoneNumber",
             ],
         ):
             raise Exception("Failed to search for users.")
         result = []
         for entry in self.connection.entries:
-            gecos_str = attribute_as_str(entry.gecos)
-            gecos = Gecos.from_string(gecos_str) if gecos_str else None
+            # gecos_str = attribute_as_str(entry.gecos)
+            # gecos = Gecos.from_string(gecos_str) if gecos_str else None
             uid_str = attribute_as_str(entry.uidNumber)
             uid_number = int(uid_str) if uid_str else None
             if not uid_number:
@@ -108,6 +109,7 @@ class LdapConnection:
                 raise ValueError(f"Missing LDAP attribute uid for {entry.entry_dn}")
             sn = attribute_as_str(entry.sn)
             given_name = attribute_as_str(entry.givenName)
+            display_name = attribute_as_str(entry.displayName)
             home_directory = attribute_as_str(entry.homeDirectory)
             if not home_directory:
                 raise ValueError(f"Missing LDAP attribute homeDirectory for {entry.entry_dn}")
@@ -122,12 +124,14 @@ class LdapConnection:
                     sn=sn,
                     mail=attribute_as_str(entry.mail),
                     given_name=given_name,
+                    display_name=display_name,
                     uid_number=uid_number,
                     gid_number=gid_number,
                     home_directory=home_directory,
                     login_shell=login_shell,
-                    gecos=gecos,
-                    ssh_public_key=attribute_list_as_str_list(entry.sshPublicKey),
+                    telephone_number=attribute_as_str(entry.telephoneNumber),
+                    # gecos=None,
+                    # ssh_public_key=attribute_list_as_str_list(entry.sshPublicKey),
                 )
             )
         return result
@@ -147,6 +151,11 @@ class LdapConnection:
             "uid": user.uid,
             "uidNumber": user.uid_number,
             "homeDirectory": user.home_directory,
+            "mail": user.mail,
+            "telephoneNumber": user.telephone_number,
+            "loginShell": user.login_shell,
+            "gidNumber": user.gid_number,
+            "displayName": user.display_name,
         }
         if user.sn:
             user_data["sn"] = user.sn
@@ -172,8 +181,8 @@ class LdapConnection:
                 "objectclass",
                 "uid",
                 "uidNumber",
-                "telephoneNumber",
                 "mail",
+                "telephoneNumber",
                 "displayName",
                 "sshPublicKey",
                 "loginShell",
@@ -208,8 +217,8 @@ class LdapConnection:
                 "objectclass",
                 "uid",
                 "uidNumber",
-                "telephoneNumber",
                 "mail",
+                "telephoneNumber",
                 "displayName",
                 "sshPublicKey",
                 "loginShell",
@@ -226,10 +235,10 @@ class LdapConnection:
         applied_diff = {}
         for key, value in diff.items():
             key = humps.camelize(key)
-            if key == "gecos":
-                gecos: Gecos = value or Gecos()  # type: ignore
-                applied_diff[key] = Gecos.model_validate(gecos).to_string()
-            elif key == "sshPublicKey":
+            # if key == "gecos":
+            #     gecos: Gecos = value or Gecos()  # type: ignore
+            #     applied_diff[key] = Gecos.model_validate(gecos).to_string()
+            if key == "sshPublicKey":
                 # We only support clearing this list for now which is fine as the
                 # SSH keys live in the upstream ADs only.
                 applied_diff[key] = [(ldap3.MODIFY_DELETE, x) for x in writable[key]]
@@ -273,7 +282,7 @@ class LdapConnection:
                 raise ValueError(f"Missing LDAP attribute gidNumber for {entry.entry_dn}")
             owner_dn = attribute_as_str(entry["bih-groupOwnerDN"])
             delegate_dns = attribute_list_as_str_list(entry["bih-groupDelegateDNs"])
-            member_uids = attribute_list_as_str_list(entry.memberUid)
+            member_uids = sorted(attribute_list_as_str_list(entry.memberUid))
             result.append(
                 LdapGroup(
                     dn=entry.entry_dn,

@@ -1,0 +1,39 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+*.egg
+dist/
+build/
+.eggs/
+
+# Virtual environments
+.venv/
+venv/
+
+# uv
+.uv/
+
+# IDE
+.idea/
+.vscode/
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Environment
+.env
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Linting
+.ruff_cache/
+.pyright/
+
+# Generated files (from state-sync command)
+*.ldif
