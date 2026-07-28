@@ -38,9 +38,7 @@ dev = [
   "ruff~=0.15",
   "pyright~=1.1",
   "datamodel-code-generator~=0.26",
-  # Pinned to the branch that carries the OpenAPI schema.
-  # Remove the branch pin once merged to main.
-  "hpc-access @ git+https://github.com/bihealth/hpc-access.git@feat/openapi-schema",
+  "hpc-access @ git+https://github.com/bihealth/hpc-access.git@main",
 ]
 
 [build-system]
