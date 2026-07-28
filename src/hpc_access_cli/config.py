@@ -9,7 +9,7 @@ from pydantic import BaseModel, HttpUrl, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
 from rich.console import Console
 
-from hpc_access_cli.models import StateOperation
+from hpc_access_cli.local_models import StateOperation
 
 #: The rich console to use for output.
 console_err = Console(file=sys.stderr)

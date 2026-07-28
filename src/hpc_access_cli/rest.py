@@ -4,14 +4,14 @@ from typing import List
 
 import httpx
 
-from hpc_access_cli.config import HpcaccessSettings
-from hpc_access_cli.models import (
+from hpc_access_cli.api_models import (
     HpcGroup,
     HpcProject,
     HpcUser,
     ResourceData,
     ResourceDataUser,
 )
+from hpc_access_cli.config import HpcaccessSettings
 
 
 class HpcaccessClient:

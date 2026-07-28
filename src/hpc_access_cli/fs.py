@@ -11,7 +11,7 @@ import xattr
 from rich.console import Console
 
 from hpc_access_cli.constants import BASE_PATH_TIER1, BASE_PATH_TIER2
-from hpc_access_cli.models import FsDirectory, FsDirectoryOp, StateOperation
+from hpc_access_cli.local_models import FsDirectory, FsDirectoryOp, StateOperation
 
 #: The rich console to use for logging.
 console_err = Console(file=sys.stderr)

@@ -1,0 +1,48 @@
+name: Weekly Schema Update
+
+on:
+  schedule:
+    # Every Monday at 06:00 UTC
+    - cron: "0 6 * * 1"
+  workflow_dispatch:
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-schema:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync --group dev
+
+      - name: Update hpc-access to latest feat/openapi-schema
+        run: uv lock --upgrade-package hpc-access
+
+      - name: Regenerate models from schema
+        run: uv run python scripts/generate_models.py
+
+      - name: Create Pull Request
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "chore: update API models from latest hpc-access schema"
+          branch: chore/weekly-schema-update
+          title: "chore: update API models from latest hpc-access schema"
+          body: |
+            Automated weekly update of API models from the hpc-access OpenAPI schema.
+
+            This PR was created by the `Weekly Schema Update` workflow.
+          labels: automated

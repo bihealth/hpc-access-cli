@@ -6,10 +6,11 @@ import typer
 from rich.console import Console
 from typing_extensions import Annotated
 
+from hpc_access_cli.api_models import ResourceData, ResourceDataUser
 from hpc_access_cli.config import load_settings
 from hpc_access_cli.constants import ENTITIES, ENTITY_USERS
 from hpc_access_cli.fs import FS_GROUP_OPS, FS_PROJECT_OPS, FS_USER_OPS
-from hpc_access_cli.models import StateOperation
+from hpc_access_cli.local_models import StateOperation
 from hpc_access_cli.states import (
     TargetStateBuilder,
     TargetStateComparison,
@@ -262,7 +263,7 @@ def sync_storage_usage(
 
     for entity in hpcaccess.keys():
         for d in getattr(dst_state, "hpc_%s" % entity).values():
-            d.resources_used = {}
+            d.resources_used = ResourceDataUser() if entity == ENTITY_USERS else ResourceData()
             name = d.username if entity == ENTITY_USERS else d.name
             hpcaccess[entity][name] = d
 
@@ -280,7 +281,7 @@ def sync_storage_usage(
         # The following lines update the entries in dst_state (!)
         d = getattr(dst_state, f"hpc_{entity}")
         p = 4 - int(entity == ENTITY_USERS)
-        d[hpcaccess[entity][name].uuid].resources_used[resource] = fs_data.rbytes / 1024**p
+        setattr(d[hpcaccess[entity][name].uuid].resources_used, resource, fs_data.rbytes / 1024**p)
 
     if not dry_run:
         deploy_hpcaccess_state(settings.hpc_access, dst_state)

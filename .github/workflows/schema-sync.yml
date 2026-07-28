@@ -1,0 +1,36 @@
+name: Schema Sync Check
+
+on:
+  pull_request:
+    paths:
+      - "src/hpc_access_cli/api_models.py"
+
+jobs:
+  check-schema-sync:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Install dependencies
+        run: uv sync --group dev
+
+      - name: Regenerate models from schema
+        run: uv run python scripts/generate_models.py
+
+      - name: Check for differences
+        run: |
+          if ! git diff --quiet src/hpc_access_cli/api_models.py; then
+            echo "::error::api_models.py is out of sync with the OpenAPI schema."
+            echo "Run 'python scripts/generate_models.py' and commit the result."
+            git diff src/hpc_access_cli/api_models.py
+            exit 1
+          fi

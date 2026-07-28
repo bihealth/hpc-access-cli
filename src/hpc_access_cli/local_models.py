@@ -1,6 +1,7 @@
-"""Pydantic models for representing records."""
+"""Local models for LDAP, filesystem, and state operations."""
 
-import datetime
+from __future__ import annotations
+
 import enum
 import grp
 import os
@@ -10,6 +11,8 @@ from typing import Any, Dict, List, Optional
 from uuid import UUID
 
 from pydantic import BaseModel
+
+from hpc_access_cli.api_models import HpcGroup, HpcProject, HpcUser
 
 #: Login shell to use for disabled users.
 LOGIN_SHELL_DISABLED = "/usr/sbin/nologin"
@@ -97,49 +100,8 @@ class FsDirectory(BaseModel):
         )
 
 
-# class Gecos(BaseModel):
-#     """GECOS information about a user."""
-
-#     #: The full name of the user.
-#     full_name: Optional[str] = None
-#     #: The office location of the user.
-#     office_location: Optional[str] = None
-#     #: The office phone number of the user.
-#     office_phone: Optional[str] = None
-#     #: The home phone number of the user.
-#     home_phone: Optional[str] = None
-#     #: The other information about the user.
-#     other: Optional[str] = None
-
-#     def to_string(self):
-#         """Convert the GECOS information to a GECOS string."""
-#         return ",".join(
-#             [
-#                 self.full_name if self.full_name else "",
-#                 self.office_location if self.office_location else "",
-#                 self.office_phone if self.office_phone else "",
-#                 self.home_phone if self.home_phone else "",
-#                 self.other if self.other else "",
-#             ]
-#         )
-
-#     @staticmethod
-#     def from_string(gecos: str) -> "Gecos":
-#         """Create a new instance from a GECOS string."""
-#         parts = gecos.split(",", 4)
-#         if len(parts) < 5:
-#             parts.extend([""] * (5 - len(parts)))
-#         return Gecos(
-#             full_name=parts[0] if parts[0] != "None" else None,
-#             office_location=parts[1] if parts[1] != "None" else None,
-#             office_phone=parts[2] if parts[2] != "None" else None,
-#             home_phone=parts[3] if parts[3] != "None" else None,
-#             other=parts[4] if parts[4] != "None" else None,
-#         )
-
-
 class LdapUser(BaseModel):
-    """A user form the LDAP directory."""
+    """A user from the LDAP directory."""
 
     #: The common name of the user.
     cn: str
@@ -163,10 +125,6 @@ class LdapUser(BaseModel):
     home_directory: str
     #: The login shell of the user.
     login_shell: str
-    # #: The GECOS information of the user.
-    # gecos: Optional[Gecos]
-    # #: Public SSH keys.
-    # ssh_public_key: List[str]
     #: Telephone number.
     telephone_number: Optional[str]
 
@@ -193,150 +151,6 @@ class LdapGroup(BaseModel):
     delegate_dns: List[str]
     #: The member uids (== user names) of the group.
     member_uids: List[str]
-
-
-class ResourceData(BaseModel):
-    """A resource request/usage for a user."""
-
-    #: Storage on tier 1 in TiB (work).
-    tier1_work: float = 0.0
-    #: Storage on tier 1 in TiB (scratch).
-    tier1_scratch: float = 0.0
-    #: Storage on tier 2 (mirrored) in TiB.
-    tier2_mirrored: float = 0.0
-    #: Storage on tier 2 (unmirrored) in TiB.
-    tier2_unmirrored: float = 0.0
-
-
-class ResourceDataUser(BaseModel):
-    """A resource request/usage for a user."""
-
-    #: Storage on tier 1 in GiB (home).
-    tier1_home: float = 0.0
-
-
-class GroupFolders(BaseModel):
-    """Folders for a group or project."""
-
-    #: The work directory.
-    tier1_work: str
-    #: The scratch directory.
-    tier1_scratch: str
-    #: The mirrored directory.
-    tier2_mirrored: str
-    #: The unmirrored directory.
-    tier2_unmirrored: str
-
-
-@enum.unique
-class Status(enum.Enum):
-    """Status of a hpc user, group, or project."""
-
-    INITIAL = "INITIAL"
-    ACTIVE = "ACTIVE"
-    DELETED = "DELETED"
-    EXPIRED = "EXPIRED"
-
-
-class HpcUser(BaseModel):
-    """A user as read from the hpc-access API."""
-
-    #: The UUID of the record.
-    uuid: UUID
-    #: The UUID of the primary ``HpcGroup``.
-    primary_group: Optional[UUID]
-    #: Description of the record.
-    description: Optional[str]
-    #: The user's email address.
-    email: Optional[str]
-    #: The full name of the user.
-    full_name: str
-    #: The first name fo the user.
-    first_name: Optional[str]
-    #: The last name of the user.
-    last_name: Optional[str]
-    #: The display name of the user.
-    display_name: Optional[str]
-    #: The office phone number of the user.
-    phone_number: Optional[str]
-    #: The requested resources.
-    resources_requested: Optional[ResourceDataUser]
-    #: The used resources.
-    resources_used: Optional[ResourceDataUser]
-    #: The status of the record.
-    status: Status
-    #: The POSIX UID of the user.
-    uid: int
-    #: The username of the record.
-    username: str
-    #: Point in time of user expiration.
-    expiration: datetime.datetime
-    #: The home directory.
-    home_directory: str
-    #: The login shell
-    login_shell: str
-    #: The version of the user record.
-    current_version: int
-
-
-class HpcGroup(BaseModel):
-    """A group as read from the hpc-access API."""
-
-    #: The UUID of the record.
-    uuid: UUID
-    #: The owning ``HpcUser``.
-    owner: UUID
-    #: Description of the record.
-    description: Optional[str]
-    #: The delegate.
-    delegate: Optional[UUID]
-    #: The requested resources.
-    resources_requested: Optional[ResourceData]
-    #: The used resources.
-    resources_used: Optional[ResourceData]
-    #: The status of the record.
-    status: Status
-    #: The POSIX GID of the corresponding Unix group.
-    gid: Optional[int]
-    #: The name of the record.
-    name: str
-    #: The folders of the group.
-    folders: GroupFolders
-    #: Point in time of group expiration.
-    expiration: datetime.datetime
-    #: The version of the group record.
-    current_version: int
-
-
-class HpcProject(BaseModel):
-    """A project as read from the hpc-access API."""
-
-    #: The UUID of the record.
-    uuid: UUID
-    #: The owning ``HpcGroup``, owner of group is owner of project.
-    group: Optional[UUID]
-    #: Description of the record.
-    description: Optional[str]
-    #: The delegate for the project.
-    delegate: Optional[UUID]
-    #: The requested resources.
-    resources_requested: Optional[ResourceData]
-    #: The used resources.
-    resources_used: Optional[ResourceData]
-    #: The status of the record.
-    status: Status
-    #: The POSIX GID of the corresponding Unix group.
-    gid: Optional[int]
-    #: The name of the record.
-    name: str
-    #: The folders of the group.
-    folders: GroupFolders
-    #: Point in time of group expiration.
-    expiration: datetime.datetime
-    #: The version of the project record.
-    current_version: int
-    #: The project's member user UUIDs.
-    members: List[UUID]
 
 
 class SystemState(BaseModel):
