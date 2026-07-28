@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.2](https://github.com/bihealth/hpc-access-cli/compare/hpc-access-cli-v0.2.1...hpc-access-cli-v0.2.2) (2026-07-28)
+
+
+### Features
+
+* add API schema sync with hpc-access OpenAPI codegen ([441da4f](https://github.com/bihealth/hpc-access-cli/commit/441da4f49b9838ee2005f6f6b02807bb1c32718e))
+
 ## [0.2.1](https://github.com/bihealth/hpc-access-cli/compare/hpc-access-cli-v0.2.0...hpc-access-cli-v0.2.1) (2026-07-28)
 
 
