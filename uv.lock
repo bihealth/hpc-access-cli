@@ -727,8 +727,8 @@ wheels = [
 
 [[package]]
 name = "hpc-access"
-version = "0.2.0"
-source = { git = "https://github.com/bihealth/hpc-access.git?rev=main#1a3d61c6e628f2ed7b11045d42d51d4af0bc2ed9" }
+version = "0.3.0"
+source = { git = "https://github.com/bihealth/hpc-access.git?rev=v0.3.0#c710f429d318eb1e4b6fcd2e53f65a3168368d69" }
 dependencies = [
     { name = "argon2-cffi" },
     { name = "celery" },
@@ -800,7 +800,7 @@ requires-dist = [
 [package.metadata.requires-dev]
 dev = [
     { name = "datamodel-code-generator", specifier = "~=0.26" },
-    { name = "hpc-access", git = "https://github.com/bihealth/hpc-access.git?rev=main" },
+    { name = "hpc-access", git = "https://github.com/bihealth/hpc-access.git?rev=v0.3.0" },
     { name = "pyright", specifier = "~=1.1" },
     { name = "ruff", specifier = "~=0.15" },
 ]
