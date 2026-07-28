@@ -190,11 +190,19 @@ def sync_data(
                 console_err.log(f"create group {group_op.group.dn}")
                 fh_ldap_group_ops.write(f"dn: {group_op.group.dn}\n")
                 fh_ldap_group_ops.write("changetype: add\n")
-                fh_ldap_group_ops.write("objectClass: groupOfNames\n")
+                fh_ldap_group_ops.write("objectClass: bih-expireDates\n")
+                fh_ldap_group_ops.write("objectClass: bih-owner\n")
+                fh_ldap_group_ops.write("objectClass: posixGroup\n")
                 fh_ldap_group_ops.write("objectClass: top\n")
+                fh_ldap_group_ops.write(f"bih-groupOwnerDN: {group_op.group.owner_dn}\n")
                 fh_ldap_group_ops.write(f"cn: {group_op.group.cn}\n")
+                fh_ldap_group_ops.write(f"gidNumber: {group_op.group.gid_number}\n")
+                if group_op.group.delegate_dns:
+                    for delegate_dn in group_op.group.delegate_dns:
+                        fh_ldap_group_ops.write(f"bih-groupDelegateDNs: {delegate_dn}\n")
+                fh_ldap_group_ops.write(f"description: {group_op.group.description}\n")
                 for member in group_op.group.member_uids:
-                    fh_ldap_group_ops.write(f"member: {member}\n")
+                    fh_ldap_group_ops.write(f"memberUid: {member}\n")
                 fh_ldap_group_ops.write("\n")
                 FS_OPS = FS_PROJECT_OPS if group_op.group.cn.startswith("hpc-prj") else FS_GROUP_OPS
                 group = group_by_gid[group_op.group.gid_number]
