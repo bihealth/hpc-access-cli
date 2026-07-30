@@ -37,7 +37,7 @@ Issues = "https://github.com/bihealth/hpc-access-cli/issues"
 dev = [
   "ruff~=0.16",
   "pyright~=1.1",
-  "datamodel-code-generator~=0.26",
+  "datamodel-code-generator~=0.71",
   "hpc-access @ git+https://github.com/bihealth/hpc-access.git@v0.3.0",
 ]
 
