@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.3](https://github.com/bihealth/hpc-access-cli/compare/v0.2.2...v0.2.3) (2026-07-31)
+
+
+### Bug Fixes
+
+* bump hpc access and update models to new openapi schema ([d58b944](https://github.com/bihealth/hpc-access-cli/commit/d58b94461686c0b06492571b10f857a58f8f3bbd))
+
 ## [0.2.2](https://github.com/bihealth/hpc-access-cli/compare/hpc-access-cli-v0.2.1...hpc-access-cli-v0.2.2) (2026-07-28)
 
 
