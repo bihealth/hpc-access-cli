@@ -38,7 +38,7 @@ dev = [
   "ruff~=0.16",
   "pyright~=1.1",
   "datamodel-code-generator~=0.71",
-  "hpc-access @ git+https://github.com/bihealth/hpc-access.git@v0.3.0",
+  "hpc-access @ git+https://github.com/bihealth/hpc-access.git@62b6c84e605b04f47709d0f8e00b8b64ec670567",
 ]
 
 [build-system]

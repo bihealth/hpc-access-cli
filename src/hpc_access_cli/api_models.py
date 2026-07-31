@@ -19,10 +19,10 @@ class GroupFolders(BaseModel):
 
 
 class HpcUserLookup(BaseModel):
-    id: int
-    username: str
-    primary_group: str = Field(..., description="Name of the group on the cluster")
-    full_name: str
+    id: int | None = None
+    username: str | None = None
+    primary_group: str | None = Field(None, description="Name of the group on the cluster")
+    full_name: str | None = None
 
 
 class PaginatedHpcUserLookupList(BaseModel):
@@ -54,84 +54,84 @@ class Status(StrEnum):
 
 
 class HpcGroup(BaseModel):
-    uuid: str
-    date_created: AwareDatetime
-    owner: UUID = Field(..., description="Record UUID")
-    delegate: UUID = Field(..., description="Record UUID")
-    resources_requested: ResourceData
+    uuid: str | None = None
+    date_created: AwareDatetime | None = None
+    owner: UUID | None = Field(None, description="Record UUID")
+    delegate: UUID | None = Field(None, description="Record UUID")
+    resources_requested: ResourceData | None = None
     resources_used: ResourceData
-    status: Status
-    description: str
+    status: Status | None = None
+    description: str | None = None
     gid: int
-    name: str
+    name: str | None = None
     folders: GroupFolders
-    expiration: AwareDatetime
-    current_version: int
+    expiration: AwareDatetime | None = None
+    current_version: int | None = None
 
 
 class HpcGroupCreateRequest(BaseModel):
-    uuid: str
-    date_created: AwareDatetime
-    resources_requested: ResourceData
-    description: str
-    expiration: AwareDatetime
+    uuid: str | None = None
+    date_created: AwareDatetime | None = None
+    resources_requested: ResourceData | None = None
+    description: str | None = None
+    expiration: AwareDatetime | None = None
     name: str
     folders: GroupFolders
-    current_version: int
+    current_version: int | None = None
 
 
 class HpcProject(BaseModel):
-    uuid: str
-    date_created: AwareDatetime
-    group: UUID = Field(..., description="Record UUID")
-    delegate: UUID = Field(..., description="Record UUID")
-    resources_requested: ResourceData
+    uuid: str | None = None
+    date_created: AwareDatetime | None = None
+    group: UUID | None = Field(None, description="Record UUID")
+    delegate: UUID | None = Field(None, description="Record UUID")
+    resources_requested: ResourceData | None = None
     resources_used: ResourceData
-    status: Status
-    description: str
+    status: Status | None = None
+    description: str | None = None
     gid: int
-    name: str
+    name: str | None = None
     folders: GroupFolders
-    expiration: AwareDatetime
-    members: list[UUID]
-    current_version: int
+    expiration: AwareDatetime | None = None
+    members: list[UUID] | None = None
+    current_version: int | None = None
 
 
 class HpcProjectCreateRequest(BaseModel):
-    uuid: str
-    date_created: AwareDatetime
-    resources_requested: ResourceData
-    description: str
-    expiration: AwareDatetime
-    group: UUID = Field(..., description="Record UUID")
-    members: list[UUID]
+    uuid: str | None = None
+    date_created: AwareDatetime | None = None
+    resources_requested: ResourceData | None = None
+    description: str | None = None
+    expiration: AwareDatetime | None = None
+    group: UUID | None = Field(None, description="Record UUID")
+    members: list[UUID] | None = None
     name: str
-    name_requested: str
+    name_requested: str | None = None
     folders: GroupFolders
-    current_version: int
+    current_version: int | None = None
 
 
 class HpcUser(BaseModel):
-    uuid: str
-    date_created: AwareDatetime
-    email: str
-    full_name: str
-    first_name: str
-    last_name: str
-    display_name: str
-    phone_number: str
-    primary_group: UUID = Field(..., description="Record UUID")
-    resources_requested: ResourceDataUser
+    uuid: str | None = None
+    date_created: AwareDatetime | None = None
+    email: str | None = None
+    full_name: str | None = None
+    first_name: str | None = None
+    last_name: str | None = None
+    display_name: str | None = None
+    phone_number: str | None = None
+    primary_group: UUID | None = Field(None, description="Record UUID")
+    resources_requested: ResourceDataUser | None = None
     resources_used: ResourceDataUser
-    status: Status
-    description: str
-    uid: int
-    username: str
-    expiration: AwareDatetime
+    status: Status | None = None
+    description: str | None = None
+    uid: int | None = None
+    username: str | None = None
+    expiration: AwareDatetime | None = None
     home_directory: str
     login_shell: str
-    removed: bool
-    current_version: int
+    removed: bool | None = None
+    current_version: int | None = None
 
 
 class PaginatedHpcGroupList(BaseModel):
