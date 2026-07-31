@@ -86,9 +86,9 @@ def gather_hpcaccess_state(settings: HpcaccessSettings) -> HpcaccessState:
     console_err.log("Loading hpc-access users, groups, and projects...")
     rest_client = HpcaccessClient(settings)
     result = HpcaccessState(
-        hpc_users={str(u.uuid): u for u in rest_client.load_users()},
-        hpc_groups={str(g.uuid): g for g in rest_client.load_groups()},
-        hpc_projects={str(p.uuid): p for p in rest_client.load_projects()},
+        hpc_users={u.uuid: u for u in rest_client.load_users()},
+        hpc_groups={g.uuid: g for g in rest_client.load_groups()},
+        hpc_projects={p.uuid: p for p in rest_client.load_projects()},
     )
     console_err.log("  # of users:", len(result.hpc_users))
     console_err.log("  # of groups:", len(result.hpc_groups))

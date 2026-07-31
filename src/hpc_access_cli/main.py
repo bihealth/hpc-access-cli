@@ -1,4 +1,5 @@
 import sys
+import uuid
 from typing import List
 
 import mechanize
@@ -281,7 +282,11 @@ def sync_storage_usage(
         # The following lines update the entries in dst_state (!)
         d = getattr(dst_state, f"hpc_{entity}")
         p = 4 - int(entity == ENTITY_USERS)
-        setattr(d[hpcaccess[entity][name].uuid].resources_used, resource, fs_data.rbytes / 1024**p)
+        setattr(
+            d[uuid.UUID(hpcaccess[entity][name].uuid)].resources_used,
+            resource,
+            fs_data.rbytes / 1024**p,
+        )
 
     if not dry_run:
         deploy_hpcaccess_state(settings.hpc_access, dst_state)
