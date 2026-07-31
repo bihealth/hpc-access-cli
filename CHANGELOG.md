@@ -1,5 +1,13 @@
 # Changelog
 
+## [0.2.4](https://github.com/bihealth/hpc-access-cli/compare/v0.2.3...v0.2.4) (2026-07-31)
+
+
+### Bug Fixes
+
+* use str instead of UUID in dict keys ([06cfe20](https://github.com/bihealth/hpc-access-cli/commit/06cfe201b920b8c699fa31c7a12d60aa0009aef9))
+* use str instead of UUID in dict keys ([03bae48](https://github.com/bihealth/hpc-access-cli/commit/03bae48f45ff6fad4bb0537f9d9708d8480e353a))
+
 ## [0.2.3](https://github.com/bihealth/hpc-access-cli/compare/v0.2.2...v0.2.3) (2026-07-31)
 
 
