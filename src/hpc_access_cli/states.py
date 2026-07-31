@@ -484,10 +484,10 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
 
     def build_hpcuser(u: LdapUser, quotas: Dict[str, str]) -> HpcUser:
         if u.login_shell != LOGIN_SHELL_DISABLED:
-            status = Status.ACTIVE
+            status = Status.active
             expiration = datetime.datetime.now() + datetime.timedelta(days=365)
         else:
-            status = Status.EXPIRED
+            status = Status.expired
             expiration = datetime.datetime.now()
         if u.gid_number and u.gid_number in group_by_gid_number:
             _primary_group = group_by_gid_number[u.gid_number].cn
@@ -544,7 +544,7 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
                 tier2_mirrored=0,
                 tier2_unmirrored=0,
             ),
-            status=Status.ACTIVE,
+            status=Status.active,
             gid=g.gid_number,
             folders=GroupFolders(
                 tier1_work=f"{BASE_PATH_TIER1}/work/groups/{name}",
@@ -588,7 +588,7 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
                 tier2_mirrored=0,
                 tier2_unmirrored=0,
             ),
-            status=Status.ACTIVE,
+            status=Status.active,
             gid=p.gid_number,
             folders=GroupFolders(
                 tier1_work=f"{BASE_PATH_TIER1}/work/projects/{name}",
