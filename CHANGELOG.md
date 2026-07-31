@@ -1,5 +1,18 @@
 # Changelog
 
+## [0.2.5](https://github.com/bihealth/hpc-access-cli/compare/v0.2.4...v0.2.5) (2026-07-31)
+
+
+### Bug Fixes
+
+* prevent AttributeError in state-dump ([7645084](https://github.com/bihealth/hpc-access-cli/commit/76450846e7409b4f65f966d04e25fdeda6eb6da9))
+* prevent AttributeError in state-dump ([a630858](https://github.com/bihealth/hpc-access-cli/commit/a630858e021f1018cfced5b6f2b5fbaacf99e583))
+* prevent ValidationError in state dump ([b581404](https://github.com/bihealth/hpc-access-cli/commit/b58140493256af1efc76cb33a1af8c0a9448124f))
+* prevent ValidationError in state dump ([a0b1314](https://github.com/bihealth/hpc-access-cli/commit/a0b1314ea07c4908e3257d3c7c32a0f0ddd7fcbd))
+* use tz aware datetime for expiration ([2896545](https://github.com/bihealth/hpc-access-cli/commit/2896545c7f5954e54a10e5518b199b8f3012a280))
+* Use uuid for HpcaccessState dict keys ([78d5963](https://github.com/bihealth/hpc-access-cli/commit/78d5963ffd6d6489b9d5f561b1c7bfa64ca19743))
+* Use uuid for HpcaccessState dict keys ([fe24b93](https://github.com/bihealth/hpc-access-cli/commit/fe24b9338ac9db1d93e4b484c5930d165ec48031))
+
 ## [0.2.4](https://github.com/bihealth/hpc-access-cli/compare/v0.2.3...v0.2.4) (2026-07-31)
 
 
