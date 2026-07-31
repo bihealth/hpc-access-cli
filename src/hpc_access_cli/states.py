@@ -503,7 +503,7 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
         else:
             primary_group = None
         return HpcUser(
-            uuid=user_uuids[u.uid],
+            uuid=str(user_uuids[u.uid]),
             primary_group=primary_group,
             description=None,
             full_name=u.cn,
@@ -532,7 +532,7 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
             console_err.log(f"no owner DN for {g.cn}, skipping")
             return
         return HpcGroup(
-            uuid=group_uuids[g.cn],
+            uuid=str(group_uuids[g.cn]),
             name=name,
             description=g.description,
             owner=user_uuids[user_by_dn[g.owner_dn].uid],
@@ -576,7 +576,7 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
             if owner_uuid not in members:
                 members.append(owner_uuid)
         return HpcProject(
-            uuid=group_uuids[p.cn],
+            uuid=str(group_uuids[p.cn]),
             name=name,
             description=g.description,
             group=group,
