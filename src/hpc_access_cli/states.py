@@ -4,6 +4,7 @@ import datetime
 import os
 import re
 import sys
+from datetime import timezone
 from typing import Dict, List, Optional
 from uuid import uuid4
 
@@ -485,10 +486,10 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
     def build_hpcuser(u: LdapUser, quotas: Dict[str, str]) -> HpcUser:
         if u.login_shell != LOGIN_SHELL_DISABLED:
             status = Status.active
-            expiration = datetime.datetime.now() + datetime.timedelta(days=365)
+            expiration = datetime.datetime.now(timezone.utc) + datetime.timedelta(days=365)
         else:
             status = Status.expired
-            expiration = datetime.datetime.now()
+            expiration = datetime.datetime.now(timezone.utc)
         if u.gid_number and u.gid_number in group_by_gid_number:
             _primary_group = group_by_gid_number[u.gid_number].cn
             primary_group = group_uuids.get(_primary_group)
@@ -503,7 +504,7 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
         else:
             primary_group = None
         return HpcUser(
-            uuid=user_uuids[u.uid],
+            uuid=str(user_uuids[u.uid]),
             primary_group=primary_group,
             description=None,
             full_name=u.cn,
@@ -526,13 +527,13 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
         )
 
     def build_hpcgroup(g: LdapGroup, quotas: Dict[str, str]) -> Optional[HpcGroup]:
-        expiration = datetime.datetime.now() + datetime.timedelta(days=365)
+        expiration = datetime.datetime.now(timezone.utc) + datetime.timedelta(days=365)
         name = strip_prefix(g.cn, POSIX_AG_PREFIX)
         if not g.owner_dn:
             console_err.log(f"no owner DN for {g.cn}, skipping")
             return
         return HpcGroup(
-            uuid=group_uuids[g.cn],
+            uuid=str(group_uuids[g.cn]),
             name=name,
             description=g.description,
             owner=user_uuids[user_by_dn[g.owner_dn].uid],
@@ -557,7 +558,7 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
         )
 
     def build_hpcproject(p: LdapGroup, quotas: Dict[str, str]) -> Optional[HpcProject]:
-        expiration = datetime.datetime.now() + datetime.timedelta(days=365)
+        expiration = datetime.datetime.now(timezone.utc) + datetime.timedelta(days=365)
         name = strip_prefix(p.cn, POSIX_PROJECT_PREFIX)
         if not p.owner_dn:
             console_err.log(f"no owner DN for {p.cn}, skipping")
@@ -576,7 +577,7 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
             if owner_uuid not in members:
                 members.append(owner_uuid)
         return HpcProject(
-            uuid=group_uuids[p.cn],
+            uuid=str(group_uuids[p.cn]),
             name=name,
             description=g.description,
             group=group,
