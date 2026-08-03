@@ -81,9 +81,9 @@ class HpcaccessClient:
         """Update resource usage for a user."""
         url = f"adminsec/api/hpcuser/{user.uuid}/"
         headers = {"Authorization": f"Token {self.settings.api_token.get_secret_value()}"}
-        resources_used = user.resources_used or ResourceDataUser().model_dump()
+        resources_used = user.resources_used or ResourceDataUser()
         data = {
-            "resources_used": resources_used,
+            "resources_used": resources_used.model_dump(),
         }
         response = self.client.patch(url, headers=headers, json=data)
         response.raise_for_status()
@@ -92,9 +92,9 @@ class HpcaccessClient:
         """Update resource usage for a group."""
         url = f"adminsec/api/hpcgroup/{group.uuid}/"
         headers = {"Authorization": f"Token {self.settings.api_token.get_secret_value()}"}
-        resources_used = group.resources_used or ResourceData().model_dump()
+        resources_used = group.resources_used or ResourceData()
         data = {
-            "resources_used": resources_used,
+            "resources_used": resources_used.model_dump(),
         }
         response = self.client.patch(url, headers=headers, json=data)
         response.raise_for_status()
@@ -103,9 +103,9 @@ class HpcaccessClient:
         """Update resource usage for a project."""
         url = f"adminsec/api/hpcproject/{project.uuid}/"
         headers = {"Authorization": f"Token {self.settings.api_token.get_secret_value()}"}
-        resources_used = project.resources_used or ResourceData().model_dump()
+        resources_used = project.resources_used or ResourceData()
         data = {
-            "resources_used": resources_used,
+            "resources_used": resources_used.model_dump(),
         }
         response = self.client.patch(url, headers=headers, json=data)
         response.raise_for_status()
