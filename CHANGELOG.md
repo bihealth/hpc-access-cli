@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.6](https://github.com/bihealth/hpc-access-cli/compare/v0.2.5...v0.2.6) (2026-08-04)
+
+
+### Bug Fixes
+
+* serialize ResourceDataUser ([71303c2](https://github.com/bihealth/hpc-access-cli/commit/71303c221599c0618fcc66118c225ab2a80e963b))
+
 ## [0.2.5](https://github.com/bihealth/hpc-access-cli/compare/v0.2.4...v0.2.5) (2026-07-31)
 
 
