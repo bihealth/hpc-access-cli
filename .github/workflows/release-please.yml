@@ -19,4 +19,4 @@ jobs:
       pr: ${{ steps.release.outputs.pr }}
       pr_head_ref: ${{ steps.release.outputs.pr_head_ref }}
     steps:
-      - uses: googleapis/release-please-action@v4
+      - uses: googleapis/release-please-action@v5
