@@ -134,6 +134,12 @@ class HpcUser(BaseModel):
     current_version: int | None = None
 
 
+class HpcaccessState(BaseModel):
+    hpc_users: dict[str, HpcUser]
+    hpc_groups: dict[str, HpcGroup]
+    hpc_projects: dict[str, HpcProject]
+
+
 class PaginatedHpcGroupList(BaseModel):
     next: AnyUrl | None = Field(
         None, examples=['http://api.example.org/accounts/?cursor=cD00ODY%3D"']

@@ -8,11 +8,8 @@ import os
 import pwd
 import stat
 from typing import Any, Dict, List, Optional
-from uuid import UUID
 
 from pydantic import BaseModel
-
-from hpc_access_cli.api_models import HpcGroup, HpcProject, HpcUser
 
 #: Login shell to use for disabled users.
 LOGIN_SHELL_DISABLED = "/usr/sbin/nologin"
@@ -162,14 +159,6 @@ class SystemState(BaseModel):
     ldap_groups: Dict[str, LdapGroup]
     #: Mapping from file system path to ``FsDirectory``.
     fs_directories: Dict[str, FsDirectory]
-
-
-class HpcaccessState(BaseModel):
-    """State as loaded from hpc-access."""
-
-    hpc_users: Dict[UUID, HpcUser]
-    hpc_groups: Dict[UUID, HpcGroup]
-    hpc_projects: Dict[UUID, HpcProject]
 
 
 @enum.unique
