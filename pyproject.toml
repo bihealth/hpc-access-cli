@@ -17,11 +17,11 @@ dependencies = [
   "ldap3~=2.9",
   "mechanize~=0.4",
   "pydantic~=2.6",
-  "pydantic-settings~=2.1",
+  "pydantic-settings~=2.15",
   "pyhumps~=3.8",
   "python-dotenv~=1.0",
   "rich~=13.7",
-  "typer~=0.9",
+  "typer~=0.27",
   "typing_extensions~=4.9",
   "xattr~=1.1",
 ]
@@ -37,7 +37,7 @@ Issues = "https://github.com/bihealth/hpc-access-cli/issues"
 dev = [
   "ruff~=0.16",
   "pyright~=1.1",
-  "datamodel-code-generator~=0.71",
+  "datamodel-code-generator~=0.72",
   "hpc-access @ git+https://github.com/bihealth/hpc-access.git@v1.0.0",
 ]
 
