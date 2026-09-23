@@ -12,6 +12,7 @@ from rich.console import Console
 
 from hpc_access_cli.api_models import (
     GroupFolders,
+    HpcaccessState,
     HpcGroup,
     HpcProject,
     HpcUser,
@@ -47,7 +48,6 @@ from hpc_access_cli.local_models import (
     LOGIN_SHELL_DISABLED,
     FsDirectory,
     FsDirectoryOp,
-    HpcaccessState,
     LdapGroup,
     LdapGroupOp,
     LdapUser,
