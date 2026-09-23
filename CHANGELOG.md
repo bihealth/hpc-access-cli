@@ -1,5 +1,12 @@
 # Changelog
 
+## [0.2.7](https://github.com/bihealth/hpc-access-cli/compare/v0.2.6...v0.2.7) (2026-09-23)
+
+
+### Features
+
+* use the HpcaccessState model from hpc-access OpenAPI schema ([#64](https://github.com/bihealth/hpc-access-cli/issues/64)) ([5a45e8e](https://github.com/bihealth/hpc-access-cli/commit/5a45e8e48703fb8cbff012f75a2c6f9e17de665a))
+
 ## [0.2.6](https://github.com/bihealth/hpc-access-cli/compare/v0.2.5...v0.2.6) (2026-08-04)
 
 
