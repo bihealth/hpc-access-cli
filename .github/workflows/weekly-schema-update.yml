@@ -35,7 +35,7 @@ jobs:
         run: uv run python scripts/generate_models.py
 
       - name: Create Pull Request
-        uses: peter-evans/create-pull-request@v7
+        uses: peter-evans/create-pull-request@v8
         with:
           token: ${{ secrets.GITHUB_TOKEN }}
           commit-message: "chore: update API models from latest hpc-access schema"
