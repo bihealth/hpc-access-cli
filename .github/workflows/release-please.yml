@@ -20,3 +20,4 @@ jobs:
       pr_head_ref: ${{ steps.release.outputs.pr_head_ref }}
     steps:
       - uses: googleapis/release-please-action@v4
+        id: release
