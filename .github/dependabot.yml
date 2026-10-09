@@ -13,6 +13,13 @@ updates:
         update-types:
           - "minor"
           - "patch"
+      github-actions-security-minor-patch:
+        applies-to: security-updates
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
 
   - package-ecosystem: "uv"
     directory: "/"
@@ -22,6 +29,13 @@ updates:
       prefix: "chore(deps)"
     groups:
       python-minor-patch:
+        patterns:
+          - "*"
+        update-types:
+          - "minor"
+          - "patch"
+      python-security-minor-patch:
+        applies-to: security-updates
         patterns:
           - "*"
         update-types:
