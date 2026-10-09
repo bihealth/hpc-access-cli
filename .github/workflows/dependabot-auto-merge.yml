@@ -1,0 +1,42 @@
+name: Dependabot auto-merge
+
+# pull_request_target runs in the context of main, so the GitHub App secrets
+# are available. This workflow never checks out or runs code from the pull
+# request.
+on: pull_request_target
+
+permissions: {}
+
+jobs:
+  auto-merge:
+    if: github.event.pull_request.user.login == 'dependabot[bot]'
+    runs-on: ubuntu-latest
+    permissions:
+      pull-requests: write
+    steps:
+      - name: Fetch Dependabot metadata
+        id: metadata
+        uses: dependabot/fetch-metadata@v3
+
+      # Only patch and minor updates are merged automatically. Major updates and
+      # updates without a known semver change need a human review.
+      - name: Create an app token
+        id: app-token
+        if: contains(fromJSON('["version-update:semver-patch", "version-update:semver-minor"]'), steps.metadata.outputs.update-type)
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.HPC_ACCESS_CLI_APP_CLIENT_ID }}
+          private-key: ${{ secrets.HPC_ACCESS_CLI_APP_PRIVATE_KEY }}
+
+      # The approval with GITHUB_TOKEN satisfies the required review. Auto-merge
+      # is enabled with the app token, because merges by GITHUB_TOKEN do not
+      # trigger workflows on main. Branch protection still waits for all checks.
+      - name: Approve and enable auto-merge
+        if: steps.app-token.outcome == 'success'
+        env:
+          ACTIONS_TOKEN: ${{ github.token }}
+          APP_TOKEN: ${{ steps.app-token.outputs.token }}
+          PR_URL: ${{ github.event.pull_request.html_url }}
+        run: |
+          GH_TOKEN="$ACTIONS_TOKEN" gh pr review --approve "$PR_URL"
+          GH_TOKEN="$APP_TOKEN" gh pr merge --auto --squash "$PR_URL"
