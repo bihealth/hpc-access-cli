@@ -1,0 +1,83 @@
+name: Update hpc-access
+
+on:
+  # Triggered by the release workflow of hpc-access with the new tag
+  workflow_dispatch:
+    inputs:
+      ref:
+        description: "hpc-access tag or commit to pin (default: latest release)"
+        required: false
+  # Fallback in case that trigger fails
+  schedule:
+    # Every Monday at 06:00 UTC
+    - cron: "0 6 * * 1"
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  update-hpc-access:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Resolve the hpc-access ref to pin
+        id: ref
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REF: ${{ inputs.ref }}
+        run: |
+          if [ -z "$REF" ]; then
+            REF=$(gh release view --repo bihealth/hpc-access --json tagName --jq .tagName)
+          fi
+          CURRENT=$(sed -n 's|.*"hpc-access @ git+https://github.com/bihealth/hpc-access.git@\([^"]*\)".*|\1|p' pyproject.toml)
+          # Only move forward, e.g. never from a pinned main commit back to an older release
+          STATUS=$(gh api "repos/bihealth/hpc-access/compare/${CURRENT}...${REF}" --jq .status)
+          echo "Current pin: ${CURRENT}, candidate: ${REF}, candidate is ${STATUS}"
+          if [ "$STATUS" = "ahead" ]; then
+            echo "ref=${REF}" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Pin hpc-access and regenerate the API models
+        if: ${{ steps.ref.outputs.ref }}
+        env:
+          REF: ${{ steps.ref.outputs.ref }}
+        run: |
+          sed -i "s|\"hpc-access @ git+https://github.com/bihealth/hpc-access.git@[^\"]*\"|\"hpc-access @ git+https://github.com/bihealth/hpc-access.git@${REF}\"|" pyproject.toml
+          grep -q "hpc-access.git@${REF}\"" pyproject.toml
+          uv lock
+          uv sync --group dev
+          uv run python scripts/generate_models.py
+
+      # Pull requests opened with GITHUB_TOKEN do not trigger CI, those opened by the app do
+      - name: Create an app token
+        if: ${{ steps.ref.outputs.ref }}
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.HPC_ACCESS_CLI_APP_CLIENT_ID }}
+          private-key: ${{ secrets.HPC_ACCESS_CLI_APP_PRIVATE_KEY }}
+
+      - name: Create pull request
+        if: ${{ steps.ref.outputs.ref }}
+        uses: peter-evans/create-pull-request@v7
+        with:
+          token: ${{ steps.app-token.outputs.token }}
+          commit-message: "chore(deps): pin hpc-access to ${{ steps.ref.outputs.ref }}"
+          branch: chore/update-hpc-access
+          title: "chore(deps): pin hpc-access to ${{ steps.ref.outputs.ref }}"
+          body: |
+            Pins the dev dependency hpc-access to `${{ steps.ref.outputs.ref }}` and regenerates `api_models.py` from its OpenAPI schema.
+
+            Created by the `Update hpc-access` workflow.
+          labels: automated
