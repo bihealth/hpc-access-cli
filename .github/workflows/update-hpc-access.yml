@@ -59,11 +59,20 @@ jobs:
           uv sync --group dev
           uv run python scripts/generate_models.py
 
+      # Pull requests opened with GITHUB_TOKEN do not trigger CI, those opened by the app do
+      - name: Create an app token
+        if: ${{ steps.ref.outputs.ref }}
+        id: app-token
+        uses: actions/create-github-app-token@v3
+        with:
+          client-id: ${{ vars.HPC_ACCESS_CLI_APP_CLIENT_ID }}
+          private-key: ${{ secrets.HPC_ACCESS_CLI_APP_PRIVATE_KEY }}
+
       - name: Create pull request
         if: ${{ steps.ref.outputs.ref }}
         uses: peter-evans/create-pull-request@v7
         with:
-          token: ${{ secrets.GITHUB_TOKEN }}
+          token: ${{ steps.app-token.outputs.token }}
           commit-message: "chore(deps): pin hpc-access to ${{ steps.ref.outputs.ref }}"
           branch: chore/update-hpc-access
           title: "chore(deps): pin hpc-access to ${{ steps.ref.outputs.ref }}"
