@@ -66,7 +66,6 @@ class HpcGroup(BaseModel):
     name: str | None = None
     folders: GroupFolders
     expiration: AwareDatetime | None = None
-    current_version: int | None = None
 
 
 class HpcGroupCreateRequest(BaseModel):
@@ -77,7 +76,6 @@ class HpcGroupCreateRequest(BaseModel):
     expiration: AwareDatetime | None = None
     name: str
     folders: GroupFolders
-    current_version: int | None = None
 
 
 class HpcProject(BaseModel):
@@ -94,7 +92,6 @@ class HpcProject(BaseModel):
     folders: GroupFolders
     expiration: AwareDatetime | None = None
     members: list[UUID] | None = None
-    current_version: int | None = None
 
 
 class HpcProjectCreateRequest(BaseModel):
@@ -108,7 +105,6 @@ class HpcProjectCreateRequest(BaseModel):
     name: str
     name_requested: str | None = None
     folders: GroupFolders
-    current_version: int | None = None
 
 
 class HpcUser(BaseModel):
@@ -131,7 +127,6 @@ class HpcUser(BaseModel):
     home_directory: str
     login_shell: str
     removed: bool | None = None
-    current_version: int | None = None
 
 
 class HpcaccessState(BaseModel):
@@ -183,7 +178,6 @@ class PatchedHpcGroup(BaseModel):
     name: str | None = None
     folders: GroupFolders | None = None
     expiration: AwareDatetime | None = None
-    current_version: int | None = None
 
 
 class PatchedHpcGroupCreateRequest(BaseModel):
@@ -194,7 +188,6 @@ class PatchedHpcGroupCreateRequest(BaseModel):
     expiration: AwareDatetime | None = None
     name: str | None = None
     folders: GroupFolders | None = None
-    current_version: int | None = None
 
 
 class PatchedHpcProject(BaseModel):
@@ -211,7 +204,6 @@ class PatchedHpcProject(BaseModel):
     folders: GroupFolders | None = None
     expiration: AwareDatetime | None = None
     members: list[UUID] | None = None
-    current_version: int | None = None
 
 
 class PatchedHpcProjectCreateRequest(BaseModel):
@@ -225,7 +217,6 @@ class PatchedHpcProjectCreateRequest(BaseModel):
     name: str | None = None
     name_requested: str | None = None
     folders: GroupFolders | None = None
-    current_version: int | None = None
 
 
 class PatchedHpcUser(BaseModel):
@@ -248,4 +239,3 @@ class PatchedHpcUser(BaseModel):
     home_directory: str | None = None
     login_shell: str | None = None
     removed: bool | None = None
-    current_version: int | None = None
