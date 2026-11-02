@@ -523,7 +523,6 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
             expiration=expiration,
             home_directory=u.home_directory,
             login_shell=u.login_shell,
-            current_version=1,
         )
 
     def build_hpcgroup(g: LdapGroup, quotas: Dict[str, str]) -> Optional[HpcGroup]:
@@ -554,7 +553,6 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
                 tier2_unmirrored=f"{BASE_PATH_TIER2}/unmirrored/groups/{name}",
             ),
             expiration=expiration,
-            current_version=1,
         )
 
     def build_hpcproject(p: LdapGroup, quotas: Dict[str, str]) -> Optional[HpcProject]:
@@ -598,7 +596,6 @@ def convert_to_hpcaccess_state(system_state: SystemState) -> HpcaccessState:
                 tier2_unmirrored=f"{BASE_PATH_TIER2}/unmirrored/projects/{name}",
             ),
             expiration=expiration,
-            current_version=1,
             members=members,
         )
 
